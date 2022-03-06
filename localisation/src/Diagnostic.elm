@@ -1,0 +1,32 @@
+module Diagnostic exposing (main)
+
+import Network exposing (Network, addEdge, addNode, node, position)
+
+
+main =
+    let
+        context =
+            { size = 1024
+            , node =
+                { radius = 0.02
+                , strokeWidth = 0.01
+                , stroke = "black"
+                , fill = "white"
+                }
+            , edge =
+                { strokeWidth = 0.015
+                , stroke = "gray"
+                }
+            }
+
+        network =
+            Network.empty
+                |> addNode (node "A" <| position 0 0)
+                |> addNode (node "B" <| position 1 0)
+                |> addNode (node "C" <| position -0.5 -1)
+                |> addNode (node "D" <| position -0.5 1)
+                |> addEdge "AB" "A" "B"
+                |> addEdge "AC" "A" "C"
+                |> addEdge "AD" "A" "D"
+    in
+    Network.view context network
