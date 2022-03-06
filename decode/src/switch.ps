@@ -1,0 +1,101 @@
+/page-width 210 def
+/page-height 297 def
+
+72 25.4 div dup scale
+
+/switch { % x y on context
+    begin [/on /y /x] dup length dict begin { exch def } forall
+        /r w 2 div def
+        /ll { x y } def
+        /lr { x w add y } def
+        /ul { x y h add } def
+        /ur { x w add y h add } def
+        gsave 
+        newpath
+        x r add y on { h r sub add  } { r add } ifelse r 0 360 arc
+        fill-color setgray
+        fill
+        newpath
+        x y r add moveto
+        ll lr r arct
+        lr ur r arct
+        ur ul r arct
+        ul ll r arct
+        closepath
+        stroke-color setgray
+        stroke
+        grestore
+    end end
+} def
+
+/switches { % x y [ons] context
+    dup begin [/context /ons /y /x] dup length dict begin { exch def } forall
+        /dx w s add def
+        0 1 ons length 1 sub {
+            /i exch def
+            x dx i mul add y ons i get context switch
+        } for
+    end end
+} def
+
+/box { % x y context
+    begin [/y /x] dup length dict begin { exch def } forall
+        gsave
+        newpath
+        x y moveto
+        side 0 rlineto
+        0 side rlineto
+        side neg 0 rlineto 
+        closepath
+        stroke-color setgray
+        stroke
+        grestore
+    end end
+} def
+
+/boxed-switches { % x y [ons] context
+   dup begin [/context /ons /y /x] dup length dict begin { exch def } forall
+        /dx side w s add ons length mul s sub sub 2 div def
+        /dy side h sub 2 div def
+        x y context box
+        x dx add y dy add ons context switches
+    end end
+} def
+
+/grid { % x y n context
+    dup begin [/context /n /y /x] dup length dict begin { exch def } forall
+        0 1 n n mul 1 sub {
+            /i exch def
+            /ix i n mod def
+            /iy i n idiv def
+            x ix side mul add y iy side mul add
+            [
+                i
+                n { dup 2 mod 0 eq exch 2 idiv } repeat
+                pop
+            ] 
+            context boxed-switches
+        } for
+    end end
+} def
+
+/n 4 def
+/outer-offset 10 def
+/side page-width outer-offset sub n div def
+/inner-offset 5 def
+/h side inner-offset sub def
+/s 3 def
+/w side inner-offset sub n 1 sub s mul sub n div def
+
+/context <<
+    /w w 
+    /h h 
+    /s s 
+    /side side 
+    /fill-color 0.60 
+    /stroke-color 0
+>> def
+
+outer-offset 2 div page-height n side mul sub 2 div n context grid
+
+showpage
