@@ -1,8 +1,3 @@
-/page-width 210 def
-/page-height 297 def
-
-72 25.4 div dup scale
-
 /switch { % x y on context
     begin [/on /y /x] dup length dict begin { exch def } forall
         /r w 2 div def
@@ -79,6 +74,59 @@
     end end
 } def
 
+
+/blind { % x y blind context
+    begin [/blind /y /x] dup length dict begin { exch def } forall 
+        gsave
+        newpath
+        x y moveto
+        side 0 rlineto
+        0 side rlineto
+        side neg 0 rlineto
+        closepath
+        blind {
+            gsave
+            stroke-color setgray
+            fill
+            grestore
+        } if
+        stroke-color setgray
+        stroke
+        grestore
+    end end
+} def
+
+/mask { % x y n [blinds] context
+    dup begin [/context /blinds /n /y /x] dup length dict begin { exch def } forall
+        0 1 blinds length 1 sub {
+            /i exch def
+            /ix i n mod def
+            /iy i n idiv def
+            x ix side mul add y iy side mul add blinds i get context blind
+        } for
+    end end
+} def
+
+/name { % x y n id index context
+    begin [/index /id /n /y /x] dup length dict begin { exch def } forall
+        gsave
+        x index side mul add y n side mul add baseline add moveto
+        font-name findfont font-size scalefont setfont
+        id show
+        grestore
+    end end
+} def
+
+/named-mask { % x y n [blinds] id index context
+    dup begin [/context /index /id /blinds /n /y /x] dup length dict begin { exch def } forall
+        x y n blinds context mask
+        x y n id index context name
+    end end
+} def
+
+/page-width 210 def
+/page-height 297 def
+
 /n 4 def
 /outer-offset 10 def
 /side page-width outer-offset sub n div def
@@ -86,6 +134,9 @@
 /h side inner-offset sub def
 /s 3 def
 /w side inner-offset sub n 1 sub s mul sub n div def
+/grid-x outer-offset 2 div def
+/grid-y page-height n side mul sub 2 div def
+
 
 /context <<
     /w w 
@@ -94,8 +145,152 @@
     /side side 
     /fill-color 0.60 
     /stroke-color 0
+    /baseline 5
+    /font-name /Helvetica
+    /font-size 12
 >> def
 
-outer-offset 2 div page-height n side mul sub 2 div n context grid
+save
+
+72 25.4 div dup scale
+
+grid-x grid-y n context grid
 
 showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (A) 0
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO complement of other
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (B) 0
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO blinds
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (0) 1
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO complement of other
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (1) 1
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO blinds
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (a) 2
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO complement of other
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (b) 2
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO blinds
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (-) 3
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+% TODO complement of other
+grid-x grid-y n [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] (+) 3
+context named-mask
+
+showpage
+
+restore
