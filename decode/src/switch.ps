@@ -124,6 +124,13 @@
     end end
 } def
 
+/negate { % [blinds]
+    [ exch {
+        not
+    } forall
+    ]
+} def
+
 /page-width 210 def
 /page-height 297 def
 
@@ -150,6 +157,35 @@
     /font-size 12
 >> def
 
+/A [
+    true true true true
+    true true true true
+    false false false false
+    false false false false
+]
+def
+
+/O [
+    true true true true
+    false false false false
+    true true true true
+    false false false false
+] def
+
+/a [
+    true true false false
+    true true false false
+    true true false false
+    true true false false
+] def
+
+/minus [
+    true false true false
+    true false true false
+    true false true false
+    true false true false
+] def
+
 save
 
 72 25.4 div dup scale
@@ -164,12 +200,29 @@ save
 
 72 25.4 div dup scale
 
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (A) 0
+grid-x grid-y n A (A) 0
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+grid-x grid-y n A negate (B) 0
+context named-mask
+
+showpage
+
+restore
+
+save
+
+72 25.4 div dup scale
+
+grid-x grid-y n O (0) 1
 context named-mask
 
 showpage
@@ -181,12 +234,7 @@ save
 72 25.4 div dup scale
 
 % TODO complement of other
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (B) 0
+grid-x grid-y n O negate (1) 1
 context named-mask
 
 showpage
@@ -197,13 +245,7 @@ save
 
 72 25.4 div dup scale
 
-% TODO blinds
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (0) 1
+grid-x grid-y n a (a) 2
 context named-mask
 
 showpage
@@ -214,13 +256,7 @@ save
 
 72 25.4 div dup scale
 
-% TODO complement of other
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (1) 1
+grid-x grid-y n a negate (b) 2
 context named-mask
 
 showpage
@@ -231,13 +267,7 @@ save
 
 72 25.4 div dup scale
 
-% TODO blinds
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (a) 2
+grid-x grid-y n minus (-) 3
 context named-mask
 
 showpage
@@ -248,47 +278,7 @@ save
 
 72 25.4 div dup scale
 
-% TODO complement of other
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (b) 2
-context named-mask
-
-showpage
-
-restore
-
-save
-
-72 25.4 div dup scale
-
-% TODO blinds
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (-) 3
-context named-mask
-
-showpage
-
-restore
-
-save
-
-72 25.4 div dup scale
-
-% TODO complement of other
-grid-x grid-y n [
-    true true true true
-    false false false false
-    true true true true
-    false false false false
-] (+) 3
+grid-x grid-y n minus negate (+) 3
 context named-mask
 
 showpage
