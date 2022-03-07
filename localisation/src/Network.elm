@@ -1,10 +1,11 @@
-module Network exposing (Network, Node, NodeId, Position, addEdge, addNode, empty, node, position, view)
+module Network exposing (Context, EdgeId, Network, Node, NodeId, Position, addEdge, addNode, empty, node, paths, position, view)
 
 import Dict exposing (Dict)
+import Network.Path as Path exposing (Path)
 import Set exposing (Set)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
-
+import Svg.Events as Event
 
 type Network
     = Network
@@ -143,6 +144,51 @@ edges (Network network) =
         |> List.concatMap connect
 
 
+paths : NodeId -> NodeId -> Network -> List (Path NodeId EdgeId)
+paths start finish net =
+    explore [] [ ( Path.empty start, Set.empty ) ] finish net
+
+
+explore : List (Path NodeId EdgeId) -> List ( Path NodeId EdgeId, Set EdgeId ) -> NodeId -> Network -> List (Path NodeId EdgeId)
+explore accumulator candidates goal net =
+    case List.head candidates of
+        Just ( candidate, visited ) ->
+            if goal == Path.end candidate then
+                explore (candidate :: accumulator) (List.tail candidates |> Maybe.withDefault []) goal net
+
+            else
+                let
+                    allowed : ( EdgeId, NodeId ) -> Bool
+                    allowed ( e, v ) =
+                        not <| Set.member e visited
+
+                    end =
+                        Path.end candidate
+
+                    extentions =
+                        edgesOf end net
+                            |> Set.toList
+                            |> List.filter allowed
+                            |> List.map (\( e, v ) -> ( Path.add e v candidate, Set.insert e visited ))
+
+                    nextCandidates =
+                        List.concat
+                            [ List.tail candidates |> Maybe.withDefault []
+                            , extentions
+                            ]
+                in
+                explore accumulator nextCandidates goal net
+
+        Nothing ->
+            List.sortBy Path.length accumulator
+
+
+edgesOf : EdgeId -> Network -> Set ( EdgeId, NodeId )
+edgesOf e (Network network) =
+    Dict.get e network.edges
+        |> Maybe.withDefault Set.empty
+
+
 type alias Context =
     { size : Int
     , node : NodeContext
@@ -164,8 +210,8 @@ type alias EdgeContext =
     }
 
 
-view : Context -> Network -> Svg a
-view context (Network network) =
+view : Context -> (NodeId -> String) -> (NodeId -> a) -> Network -> Svg a
+view context nodeColor nodeOnClick (Network network) =
     let
         nodes =
             network.nodes
@@ -199,12 +245,12 @@ view context (Network network) =
             , Attribute.strokeWidth <| String.fromFloat context.node.strokeWidth
             ]
           <|
-            List.map (viewNode context.node) nodes
+            List.map (viewNode context.node nodeColor nodeOnClick) nodes
         ]
 
 
-viewNode : NodeContext -> Node -> Svg a
-viewNode context (Node v) =
+viewNode : NodeContext -> (NodeId -> String) -> (NodeId -> a) -> Node -> Svg a
+viewNode context nodeColor nodeOnClick (Node v) =
     let
         x =
             v.position
@@ -225,6 +271,8 @@ viewNode context (Node v) =
         , Attribute.cx x
         , Attribute.cy y
         , Attribute.r r
+        , Attribute.fill <| nodeColor v.id
+        , Event.onClick (nodeOnClick v.id)
         ]
         []
 

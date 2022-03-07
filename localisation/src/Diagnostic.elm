@@ -1,6 +1,9 @@
 module Diagnostic exposing (main)
 
-import Network exposing (Network, addEdge, addNode, node, position)
+import Browser
+import Network exposing (addEdge, addNode, node, position)
+import Platform
+import Problem
 
 
 main =
@@ -28,5 +31,12 @@ main =
                 |> addEdge "AB" "A" "B"
                 |> addEdge "AC" "A" "C"
                 |> addEdge "AD" "A" "D"
+
+        problem =
+            Problem.problem network "A" "AB"
     in
-    Network.view context network
+    Browser.sandbox
+        { init = problem
+        , update = Problem.update
+        , view = Problem.view context
+        }
