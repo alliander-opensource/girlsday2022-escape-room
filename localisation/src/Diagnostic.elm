@@ -2,23 +2,31 @@ module Diagnostic exposing (main)
 
 import Browser
 import Network exposing (addEdge, addNode, node, position)
-import Platform
 import Problem
 
 
 main =
     let
         context =
-            { size = 1024
-            , node =
-                { radius = 0.02
-                , strokeWidth = 0.01
-                , stroke = "black"
-                , fill = "white"
+            { network =
+                { size = 1024
+                , node =
+                    { radius = 0.02
+                    , strokeWidth = 0.01
+                    , stroke = "black"
+                    , fill = "white"
+                    }
+                , edge =
+                    { strokeWidth = 0.015
+                    , stroke = "gray"
+                    }
                 }
-            , edge =
-                { strokeWidth = 0.015
-                , stroke = "gray"
+            , problem =
+                { status =
+                    { alive = "green"
+                    , dead = "red"
+                    , indetermined = "white"
+                    }
                 }
             }
 

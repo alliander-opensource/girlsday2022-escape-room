@@ -1,10 +1,9 @@
-module Problem exposing (Problem, Msg, Status, problem, update, view)
+module Problem exposing (Context, Msg, Problem, Status, problem, update, view)
 
 import Dict exposing (Dict)
-import Network exposing (Context, EdgeId, Network, NodeId)
+import Network exposing (EdgeId, Network, NodeId)
 import Network.Path as Path
 import Svg exposing (Svg)
-import Svg.Attributes as Attributes
 
 
 type Problem
@@ -29,6 +28,7 @@ problem network root faulty =
         , root = root
         , faulty = faulty
         , status = Dict.empty
+            |> Dict.insert root Alive
         }
 
 
@@ -58,23 +58,38 @@ reachable v (Problem p) =
         |> not
 
 
+type alias Context =
+    { network : Network.Context
+    , problem :
+        { status : StatusContext
+        }
+    }
+
+
+type alias StatusContext =
+    { alive : String
+    , dead : String
+    , indetermined : String
+    }
+
+
 view : Context -> Problem -> Svg Msg
 view context (Problem p) =
     let
         toColor status =
             case status of
                 Alive ->
-                    "green"
+                    context.problem.status.alive
 
                 Dead ->
-                    "red"
+                    context.problem.status.dead
 
                 Indetermined ->
-                    "white"
+                    context.problem.status.indetermined
 
         nodeColor nodeId =
             Dict.get nodeId p.status
                 |> Maybe.withDefault Indetermined
                 |> toColor
     in
-    Network.view context nodeColor (Determine) p.network
+    Network.view context.network nodeColor Determine p.network

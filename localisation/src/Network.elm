@@ -7,6 +7,7 @@ import Svg exposing (Svg)
 import Svg.Attributes as Attribute
 import Svg.Events as Event
 
+
 type Network
     = Network
         { nodes : Dict NodeId Node
