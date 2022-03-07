@@ -1,3 +1,7 @@
+%!PS-Adobe-3.0
+%%Pages: 9
+%%EndComments
+%%BeginProlog
 /switch { % x y on context
     begin [/on /y /x] dup length dict begin { exch def } forall
         /r w 2 div def
@@ -131,6 +135,8 @@
     ]
 } def
 
+%%EndProlog
+%%BeginSetup
 /page-width 210 def
 /page-height 297 def
 
@@ -185,8 +191,9 @@ def
     true false true false
     true false true false
 ] def
-
-save
+%%EndSetup
+%%Page: Grid 1
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -194,9 +201,9 @@ grid-x grid-y n context grid
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-A 2
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -205,9 +212,9 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-B 3
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -216,9 +223,9 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-0 4
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -227,21 +234,20 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-1 5
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
-% TODO complement of other
 grid-x grid-y n O negate (1) 1
 context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-a 6
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -250,9 +256,9 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-b 7
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -261,9 +267,9 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-minus 8
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -272,9 +278,9 @@ context named-mask
 
 showpage
 
-restore
-
-save
+clean-slate restore
+%%Page: Mask-plus 9
+save /clean-slate exch def
 
 72 25.4 div dup scale
 
@@ -283,4 +289,6 @@ context named-mask
 
 showpage
 
-restore
+clean-slate restore
+%%Trailer
+%%EOF
