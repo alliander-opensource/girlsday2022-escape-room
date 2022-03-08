@@ -2,9 +2,10 @@ module Diagnostic exposing (main)
 
 import Browser
 import Network exposing (addEdge, addNode, node, position)
-import Problem
+import Problem exposing (Msg, Problem)
 
 
+main : Program () Problem Msg
 main =
     let
         context =
@@ -41,10 +42,16 @@ main =
                 |> addEdge "AD" "A" "D"
 
         problem =
-            Problem.problem network "A" "AB"
+            Problem.problem network "A" "AB" "A1b-"
     in
-    Browser.sandbox
-        { init = problem
-        , update = Problem.update
+    Browser.element
+        { init = \_ -> ( problem, Problem.label problem )
+        , update = lift Problem.update
         , view = Problem.view context
+        , subscriptions = \_ -> Sub.none
         }
+
+
+lift : (msg -> m -> m) -> msg -> m -> ( m, Cmd msg )
+lift update msg m =
+    ( update msg m, Cmd.none )

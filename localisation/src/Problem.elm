@@ -1,8 +1,10 @@
-module Problem exposing (Context, Msg, Problem, Status, problem, update, view)
+module Problem exposing (Context, Msg, Problem, Status, problem, update, view, label)
 
+import Code exposing (Code)
 import Dict exposing (Dict)
 import Network exposing (EdgeId, Network, NodeId)
 import Network.Path as Path
+import Random
 import Svg exposing (Svg)
 
 
@@ -11,7 +13,9 @@ type Problem
         { network : Network
         , root : NodeId
         , faulty : EdgeId
+        , code : Code
         , status : Dict NodeId Status
+        , codes : Dict EdgeId String
         }
 
 
@@ -21,19 +25,23 @@ type Status
     | Indetermined
 
 
-problem : Network -> NodeId -> EdgeId -> Problem
-problem network root faulty =
+problem : Network -> NodeId -> EdgeId -> Code -> Problem
+problem network root faulty code =
     Problem
         { network = network
         , root = root
         , faulty = faulty
-        , status = Dict.empty
-            |> Dict.insert root Alive
+        , code = code
+        , status =
+            Dict.empty
+                |> Dict.insert root Alive
+        , codes = Dict.empty
         }
 
 
 type Msg
     = Determine NodeId
+    | Label EdgeId String
 
 
 update : Msg -> Problem -> Problem
@@ -49,6 +57,9 @@ update msg ((Problem p) as prblm) =
             else
                 Problem { p | status = p.status |> Dict.insert v Dead }
 
+        Label e code ->
+            Problem { p | codes = p.codes |> Dict.insert e code }
+
 
 reachable : NodeId -> Problem -> Bool
 reachable v (Problem p) =
@@ -56,6 +67,20 @@ reachable v (Problem p) =
         |> List.filter (not << Path.over p.faulty)
         |> List.isEmpty
         |> not
+
+
+label : Problem -> Cmd Msg
+label ((Problem p) as prblm) =
+    let
+        generator =
+            Code.avoiding p.code Code.code
+    in
+    p.network
+        |> Network.edges
+        |> List.map Network.edgeId
+        |> List.map Label
+        |> List.map (\msg -> Random.generate msg generator)
+        |> Cmd.batch
 
 
 type alias Context =

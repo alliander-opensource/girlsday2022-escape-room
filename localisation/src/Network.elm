@@ -1,4 +1,4 @@
-module Network exposing (Context, EdgeId, Network, Node, NodeId, Position, addEdge, addNode, empty, node, paths, position, view)
+module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, Position, addEdge, addNode, edgeId, edges, empty, node, paths, position, view)
 
 import Dict exposing (Dict)
 import Network.Path as Path exposing (Path)
@@ -114,6 +114,11 @@ type Edge
         , start : ( NodeId, Position )
         , finish : ( NodeId, Position )
         }
+
+
+edgeId : Edge -> EdgeId
+edgeId (Edge { id }) =
+    id
 
 
 edges : Network -> List Edge
