@@ -53,9 +53,14 @@ void monitor() {
 }
 
 void transition() {
-  if (ch == HIGH) {
+  if (ch == HIGH && active) {
     if (bA == HIGH && b0 == LOW && ba == HIGH && bp == LOW) {
       active = false;
+    }
+  }
+  if (ch == HIGH && !active) {
+    if (bA == HIGH && b0 == HIGH && ba == HIGH && bp == HIGH) {
+      active = true;
     }
   }
 }
