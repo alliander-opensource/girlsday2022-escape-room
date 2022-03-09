@@ -1,30 +1,34 @@
 // The five input buttons
-int check    = 3;
-int button_A = 4;
-int button_0 = 5;
-int button_a = 6;
-int button_p = 7;
-
-int ch = LOW;
-int bA = LOW;
-int b0 = LOW;
-int ba = LOW;
-int bp = LOW;
+const int pin_check    = 3;
+const int pin_button_A = 4;
+const int pin_button_0 = 5;
+const int pin_button_a = 6;
+const int pin_button_p = 7;
 
 // The two output leds
-int inactive_signal = 9;
-int active_signal   = 10;
+const int pin_inactive = 9;
+const int pin_active   = 10;
+
+const int BUTTON_check = 0;
+const int BUTTON_A = 1;
+const int BUTTON_0 = 2;
+const int BUTTON_a = 3;
+const int BUTTON_p = 4;
+
+int buttons[] = {
+  LOW, LOW, LOW, LOW, LOW};
+
 
 int active = true;
 
 void setup() {                
-  pinMode(check,    INPUT);
-  pinMode(button_A, INPUT);
-  pinMode(button_0, INPUT);
-  pinMode(button_a, INPUT);
-  pinMode(button_p, INPUT);
-  pinMode(inactive_signal, OUTPUT);
-  pinMode(active_signal,   OUTPUT);
+  pinMode(pin_check,    INPUT);
+  pinMode(pin_button_A, INPUT);
+  pinMode(pin_button_0, INPUT);
+  pinMode(pin_button_a, INPUT);
+  pinMode(pin_button_p, INPUT);
+  pinMode(pin_inactive, OUTPUT);
+  pinMode(pin_active,   OUTPUT);
   Serial.begin(9600);
 }
 
@@ -36,33 +40,49 @@ void loop() {
 }
 
 void read_input() {
-  ch = digitalRead(check);
-  bA = digitalRead(button_A);
-  b0 = digitalRead(button_0);
-  ba = digitalRead(button_a);
-  bp = digitalRead(button_p);
+  buttons[BUTTON_check] = digitalRead(pin_check);
+  buttons[BUTTON_A] = digitalRead(pin_button_A);
+  buttons[BUTTON_0] = digitalRead(pin_button_0);
+  buttons[BUTTON_a] = digitalRead(pin_button_a);
+  buttons[BUTTON_p] = digitalRead(pin_button_p);
 }
 
 void monitor() {
-  Serial.print(ch);
-  Serial.print(bA);
-  Serial.print(b0);
-  Serial.print(ba);
-  Serial.print(bp);
+  Serial.print(buttons[BUTTON_check]);
+  Serial.print(buttons[BUTTON_A]);
+  Serial.print(buttons[BUTTON_0]);
+  Serial.print(buttons[BUTTON_a]);
+  Serial.print(buttons[BUTTON_p]);
   Serial.println();
 }
 
 void transition() {
-  if (ch == HIGH && active) {
-    if (bA == HIGH && b0 == LOW && ba == HIGH && bp == LOW) {
-      active = false;
+  if (switching() && active) {
+    if (active_code_is(HIGH, LOW, HIGH, LOW)) {
+      deactivate();
     }
   }
-  if (ch == HIGH && !active) {
-    if (bA == HIGH && b0 == HIGH && ba == HIGH && bp == HIGH) {
-      active = true;
+  if (switching() && !active) {
+    if (active_code_is(HIGH, HIGH, HIGH, HIGH)) {
+      activate();
     }
   }
+}
+
+boolean switching() {
+  return buttons[BUTTON_check] == HIGH;
+}
+
+boolean active_code_is(int value_A, int value_0, int value_a, int value_p) {
+  return buttons[BUTTON_A] == value_A && buttons[BUTTON_0] == value_0 && buttons[BUTTON_a] == value_a && buttons[BUTTON_p] == value_p;
+}
+
+void deactivate() {
+  active = false;
+}
+
+void activate() {
+  active = true;
 }
 
 void signal() {
@@ -75,12 +95,13 @@ void signal() {
 }
 
 void signal_live() {
-  digitalWrite(inactive_signal, LOW);
-  digitalWrite(active_signal, HIGH);
+  digitalWrite(pin_inactive, LOW);
+  digitalWrite(pin_active, HIGH);
 }
 
 void signal_dead() {
-  digitalWrite(inactive_signal, HIGH);
-  digitalWrite(active_signal, LOW);
+  digitalWrite(pin_inactive, HIGH);
+  digitalWrite(pin_active, LOW);
 }
+
 
