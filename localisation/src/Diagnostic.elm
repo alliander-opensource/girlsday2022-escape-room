@@ -34,12 +34,17 @@ main =
         network =
             Network.empty
                 |> addNode (node "A" <| position 0 0)
-                |> addNode (node "B" <| position 1 0)
+                |> addNode (node "B" <| position 0.5 0)
+                |> addNode (node "Ba" <| position 1 0.5)
+                |> addNode (node "Bb" <| position 1 -0.5)
                 |> addNode (node "C" <| position -0.5 -1)
                 |> addNode (node "D" <| position -0.5 1)
                 |> addEdge "AB" "A" "B"
                 |> addEdge "AC" "A" "C"
                 |> addEdge "AD" "A" "D"
+                |> addEdge "BBa" "B" "Ba"
+                |> addEdge "BBb" "B" "Bb"
+
 
         problem =
             Problem.problem network "A" "AB" "A1b-"
