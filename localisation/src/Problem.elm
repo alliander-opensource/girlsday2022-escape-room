@@ -1,4 +1,4 @@
-module Problem exposing (Context, Msg, Problem, Status, labelEdges, problem, update, view)
+module Problem exposing (Context, Msg, Problem, Status, problem, update, view)
 
 import Code exposing (Code)
 import Dict exposing (Dict)
@@ -7,8 +7,8 @@ import Network.Path as Path
 import Network.Position as Position
 import Random
 import Set exposing (Set)
-import Svg exposing (Svg)
-import Svg.Attributes as Attribute
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as Attribute
 
 
 type Problem
@@ -18,7 +18,6 @@ type Problem
         , faulty : EdgeId
         , code : Visibility Code
         , status : Dict NodeId Status
-        , codes : Dict EdgeId String
         }
 
 
@@ -43,13 +42,11 @@ problem network root faulty code =
         , status =
             Dict.empty
                 |> Dict.insert root Alive
-        , codes = Dict.empty
         }
 
 
 type Msg
     = Determine NodeId
-    | Label EdgeId String
 
 
 update : Msg -> Problem -> Problem
@@ -68,9 +65,6 @@ update msg prblm =
                 prblm
                     |> dead v
                     |> solved
-
-        Label e code ->
-            label e code prblm
 
 
 statusKnown : NodeId -> Problem -> Bool
@@ -151,31 +145,6 @@ target vs =
             v
 
 
-label : EdgeId -> Code -> Problem -> Problem
-label e code (Problem p) =
-    Problem { p | codes = p.codes |> Dict.insert e code }
-
-
-labelEdges : Problem -> Cmd Msg
-labelEdges (Problem p) =
-    let
-        code =
-            case p.code of
-                Hidden c ->
-                    c
-
-                Visible c ->
-                    c
-
-        generator =
-            Code.avoiding code Code.code
-    in
-    p.network
-        |> Network.edges
-        |> List.map Network.edgeId
-        |> List.map Label
-        |> List.map (\msg -> Random.generate msg generator)
-        |> Cmd.batch
 
 
 type alias Context =

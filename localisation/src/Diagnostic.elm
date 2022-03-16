@@ -4,9 +4,8 @@ import Browser
 import Network exposing (addEdge, addNode, node)
 import Network.Position exposing (position)
 import Problem exposing (Msg, Problem)
-import Svg exposing (Svg)
-import Svg.Attributes as Attribute
-
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as Attribute
 
 main : Program () Problem Msg
 main =
@@ -56,9 +55,9 @@ main =
             Problem.problem network "A" "AB" "A1b-"
     in
     Browser.element
-        { init = \_ -> ( problem, Problem.labelEdges problem )
+        { init = \_ -> ( problem, Cmd.none )
         , update = lift Problem.update
-        , view = view context
+        , view = view context >> Svg.toUnstyled
         , subscriptions = \_ -> Sub.none
         }
 
@@ -83,6 +82,7 @@ view context problem =
         [ Attribute.width <| String.fromInt context.network.size
         , Attribute.height <| String.fromInt context.network.size
         , Attribute.viewBox viewBox
+        , Attribute.cursor "default"
         ]
     <|
         List.concat

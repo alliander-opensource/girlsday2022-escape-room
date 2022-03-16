@@ -5,9 +5,9 @@ import Html.Attributes exposing (start)
 import Network.Path as Path exposing (Path)
 import Network.Position as Position exposing (Position, position)
 import Set exposing (Set)
-import Svg exposing (Svg)
-import Svg.Attributes as Attribute
-import Svg.Events as Event
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as Attribute
+import Svg.Styled.Events as Event
 
 
 type Network
