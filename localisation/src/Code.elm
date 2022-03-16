@@ -1,8 +1,11 @@
-module Code exposing (Code, code, avoiding)
+module Code exposing (Code, avoiding, code)
 
 import Random exposing (Generator)
 
-type alias Code = String
+
+type alias Code =
+    String
+
 
 code : Generator Code
 code =

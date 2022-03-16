@@ -1,4 +1,4 @@
-module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, addEdge, addNode, edgeId, edges, empty, endpoints, node, paths, view, locationOf)
+module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, addEdge, addNode, edgeId, edges, empty, endpoints, locationOf, node, paths, view)
 
 import Dict exposing (Dict)
 import Html.Attributes exposing (start)

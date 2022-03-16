@@ -1,6 +1,7 @@
-module Problem exposing (Context, Msg, Problem, Status, problem, update, view)
+module Problem exposing (Context, Msg, Problem, Status, isDetermining, problem, update, view)
 
 import Code exposing (Code)
+import Delay
 import Dict exposing (Dict)
 import Network exposing (EdgeId, Network, NodeId)
 import Network.Path as Path
@@ -9,6 +10,7 @@ import Random
 import Set exposing (Set)
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
+import Task
 
 
 type Problem
@@ -18,6 +20,7 @@ type Problem
         , faulty : EdgeId
         , code : Visibility Code
         , status : Dict NodeId Status
+        , determining : State
         }
 
 
@@ -32,6 +35,11 @@ type Status
     | Indetermined
 
 
+type State
+    = Idle
+    | Determining NodeId
+
+
 problem : Network -> NodeId -> EdgeId -> Code -> Problem
 problem network root faulty code =
     Problem
@@ -42,34 +50,59 @@ problem network root faulty code =
         , status =
             Dict.empty
                 |> Dict.insert root Alive
+        , determining = Idle
         }
 
 
 type Msg
     = Determine NodeId
+    | Determined Bool NodeId
 
 
-update : Msg -> Problem -> Problem
-update msg prblm =
+update : Context -> Msg -> Problem -> ( Problem, Cmd Msg )
+update context msg prblm =
     case msg of
         Determine v ->
-            if statusKnown v prblm then
-                prblm
-
-            else if reachable v prblm then
-                prblm
-                    |> alive v
-                    |> solved
+            if statusKnown v prblm || isDetermining prblm then
+                ( prblm, Cmd.none )
 
             else
-                prblm
+                ( prblm
+                    |> determining v
+                , Delay.after context.problem.delay <| Determined (reachable v prblm) v
+                )
+
+        Determined isReachable v ->
+            if isReachable then
+                ( prblm
+                    |> determined
+                    |> alive v
+                    |> solved
+                , Cmd.none
+                )
+
+            else
+                ( prblm
+                    |> determined
                     |> dead v
                     |> solved
+                , Cmd.none
+                )
 
 
 statusKnown : NodeId -> Problem -> Bool
 statusKnown v (Problem p) =
     Dict.member v p.status
+
+
+isDetermining : Problem -> Bool
+isDetermining (Problem p) =
+    case p.determining of
+        Idle ->
+            False
+
+        Determining _ ->
+            True
 
 
 reachable : NodeId -> Problem -> Bool
@@ -106,6 +139,16 @@ solved (Problem p) =
                 hide p.code
     in
     Problem { p | code = code }
+
+
+determined : Problem -> Problem
+determined (Problem p) =
+    Problem { p | determining = Idle }
+
+
+determining : NodeId -> Problem -> Problem
+determining v (Problem p) =
+    Problem { p | determining = Determining v }
 
 
 all : (a -> Bool) -> Set a -> Bool
@@ -145,13 +188,12 @@ target vs =
             v
 
 
-
-
 type alias Context =
     { network : Network.Context
     , problem :
         { status : StatusContext
         , code : CodeContext
+        , delay: Int
         }
     }
 
@@ -214,8 +256,9 @@ viewCode context (Problem p) =
                 [ Svg.text_
                     [ Attribute.x <| String.fromFloat <| Position.xCoordinate position
                     , Attribute.y <| String.fromFloat <| Position.yCoordinate position
-                    , Attribute.fill context.fill 
-                    , Attribute.fontSize <| (String.fromFloat context.size) ++ "px" ]
+                    , Attribute.fill context.fill
+                    , Attribute.fontSize <| String.fromFloat context.size ++ "px"
+                    ]
                     [ Svg.text code ]
                 ]
             ]

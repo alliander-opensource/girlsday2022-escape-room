@@ -7,6 +7,7 @@ import Problem exposing (Msg, Problem)
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
 
+
 main : Program () Problem Msg
 main =
     let
@@ -34,6 +35,7 @@ main =
                     { size = 0.1
                     , fill = "black"
                     }
+                , delay = 1000
                 }
             }
 
@@ -56,15 +58,10 @@ main =
     in
     Browser.element
         { init = \_ -> ( problem, Cmd.none )
-        , update = lift Problem.update
+        , update = Problem.update context
         , view = view context >> Svg.toUnstyled
         , subscriptions = \_ -> Sub.none
         }
-
-
-lift : (msg -> m -> m) -> msg -> m -> ( m, Cmd msg )
-lift update msg m =
-    ( update msg m, Cmd.none )
 
 
 view : Problem.Context -> Problem -> Svg Problem.Msg
@@ -77,12 +74,19 @@ view context problem =
             [ -1 - offset, -1 - offset, 2 + 2 * offset, 2 + 2 * offset ]
                 |> List.map String.fromFloat
                 |> String.join " "
+
+        cursor =
+            if Problem.isDetermining problem then
+                "wait"
+
+            else
+                "default"
     in
     Svg.svg
         [ Attribute.width <| String.fromInt context.network.size
         , Attribute.height <| String.fromInt context.network.size
         , Attribute.viewBox viewBox
-        , Attribute.cursor "default"
+        , Attribute.cursor cursor
         ]
     <|
         List.concat
