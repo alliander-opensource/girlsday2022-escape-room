@@ -1,7 +1,9 @@
-module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, Position, addEdge, addNode, edgeId, edges, empty, node, paths, position, view)
+module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, addEdge, addNode, edgeId, edges, empty, endpoints, node, paths, view, locationOf)
 
 import Dict exposing (Dict)
+import Html.Attributes exposing (start)
 import Network.Path as Path exposing (Path)
+import Network.Position as Position exposing (Position, position)
 import Set exposing (Set)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
@@ -79,29 +81,11 @@ positionOf (Node v) =
     v.position
 
 
-type Position
-    = Position
-        { x : Float
-        , y : Float
-        }
-
-
-position : Float -> Float -> Position
-position x y =
-    Position
-        { x = x
-        , y = y
-        }
-
-
-xCoordinate : Position -> Float
-xCoordinate (Position { x }) =
-    x
-
-
-yCoordinate : Position -> Float
-yCoordinate (Position { y }) =
-    y
+locationOf : NodeId -> Network -> Maybe Position
+locationOf start (Network network) =
+    network.nodes
+        |> Dict.get start
+        |> Maybe.map positionOf
 
 
 type alias EdgeId =
@@ -122,21 +106,14 @@ edgeId (Edge { id }) =
 
 
 edges : Network -> List Edge
-edges (Network network) =
+edges ((Network network) as net) =
     let
-        locationOf : NodeId -> Position
-        locationOf start =
-            network.nodes
-                |> Dict.get start
-                |> Maybe.map positionOf
-                |> Maybe.withDefault (position 0 0)
-
         connection : NodeId -> ( EdgeId, NodeId ) -> Edge
         connection start ( id, finish ) =
             Edge
                 { id = id
-                , start = ( start, locationOf start )
-                , finish = ( finish, locationOf finish )
+                , start = ( start, locationOf start net |> Maybe.withDefault (position 0 0) )
+                , finish = ( finish, locationOf finish net |> Maybe.withDefault (position 0 0) )
                 }
 
         connect : ( NodeId, Set ( EdgeId, NodeId ) ) -> List Edge
@@ -148,6 +125,19 @@ edges (Network network) =
     network.edges
         |> Dict.toList
         |> List.concatMap connect
+
+
+endpoints : EdgeId -> Network -> Set NodeId
+endpoints target network =
+    let
+        ends (Edge { start, finish }) =
+            [ Tuple.first start, Tuple.first finish ]
+    in
+    network
+        |> edges
+        |> List.filter (edgeId >> (==) target)
+        |> List.concatMap ends
+        |> Set.fromList
 
 
 paths : NodeId -> NodeId -> Network -> List (Path NodeId EdgeId)
@@ -216,43 +206,30 @@ type alias EdgeContext =
     }
 
 
-view : Context -> (NodeId -> String) -> (NodeId -> a) -> Network -> Svg a
+view : Context -> (NodeId -> String) -> (NodeId -> a) -> Network -> List (Svg a)
 view context nodeColor nodeOnClick (Network network) =
     let
         nodes =
             network.nodes
                 |> Dict.toList
                 |> List.map Tuple.second
-
-        offset =
-            context.node.radius + context.node.strokeWidth
-
-        viewBox =
-            [ -1 - offset, -1 - offset, 2 + 2 * offset, 2 + 2 * offset ]
-                |> List.map String.fromFloat
-                |> String.join " "
     in
-    Svg.svg
-        [ Attribute.width <| String.fromInt context.size
-        , Attribute.height <| String.fromInt context.size
-        , Attribute.viewBox viewBox
+    [ Svg.g
+        [ Attribute.id "edges"
+        , Attribute.stroke context.edge.stroke
+        , Attribute.strokeWidth <| String.fromFloat context.edge.strokeWidth
         ]
-        [ Svg.g
-            [ Attribute.id "edges"
-            , Attribute.stroke context.edge.stroke
-            , Attribute.strokeWidth <| String.fromFloat context.edge.strokeWidth
-            ]
-          <|
-            List.map viewEdge (edges <| Network network)
-        , Svg.g
-            [ Attribute.id "nodes"
-            , Attribute.stroke context.node.stroke
-            , Attribute.fill context.node.fill
-            , Attribute.strokeWidth <| String.fromFloat context.node.strokeWidth
-            ]
-          <|
-            List.map (viewNode context.node nodeColor nodeOnClick) nodes
+      <|
+        List.map viewEdge (edges <| Network network)
+    , Svg.g
+        [ Attribute.id "nodes"
+        , Attribute.stroke context.node.stroke
+        , Attribute.fill context.node.fill
+        , Attribute.strokeWidth <| String.fromFloat context.node.strokeWidth
         ]
+      <|
+        List.map (viewNode context.node nodeColor nodeOnClick) nodes
+    ]
 
 
 viewNode : NodeContext -> (NodeId -> String) -> (NodeId -> a) -> Node -> Svg a
@@ -260,12 +237,12 @@ viewNode context nodeColor nodeOnClick (Node v) =
     let
         x =
             v.position
-                |> xCoordinate
+                |> Position.xCoordinate
                 |> String.fromFloat
 
         y =
             v.position
-                |> yCoordinate
+                |> Position.yCoordinate
                 |> String.fromFloat
 
         r =
@@ -297,9 +274,9 @@ viewEdge (Edge { id, start, finish }) =
     in
     Svg.line
         [ Attribute.id identity
-        , Attribute.x1 <| String.fromFloat <| xCoordinate s
-        , Attribute.y1 <| String.fromFloat <| yCoordinate s
-        , Attribute.x2 <| String.fromFloat <| xCoordinate f
-        , Attribute.y2 <| String.fromFloat <| yCoordinate f
+        , Attribute.x1 <| String.fromFloat <| Position.xCoordinate s
+        , Attribute.y1 <| String.fromFloat <| Position.yCoordinate s
+        , Attribute.x2 <| String.fromFloat <| Position.xCoordinate f
+        , Attribute.y2 <| String.fromFloat <| Position.yCoordinate f
         ]
         []

@@ -1,11 +1,14 @@
-module Problem exposing (Context, Msg, Problem, Status, problem, update, view, label)
+module Problem exposing (Context, Msg, Problem, Status, labelEdges, problem, update, view)
 
 import Code exposing (Code)
 import Dict exposing (Dict)
 import Network exposing (EdgeId, Network, NodeId)
 import Network.Path as Path
+import Network.Position as Position
 import Random
+import Set exposing (Set)
 import Svg exposing (Svg)
+import Svg.Attributes as Attribute
 
 
 type Problem
@@ -13,10 +16,15 @@ type Problem
         { network : Network
         , root : NodeId
         , faulty : EdgeId
-        , code : Code
+        , code : Visibility Code
         , status : Dict NodeId Status
         , codes : Dict EdgeId String
         }
+
+
+type Visibility a
+    = Hidden a
+    | Visible a
 
 
 type Status
@@ -31,7 +39,7 @@ problem network root faulty code =
         { network = network
         , root = root
         , faulty = faulty
-        , code = code
+        , code = Hidden code
         , status =
             Dict.empty
                 |> Dict.insert root Alive
@@ -45,20 +53,29 @@ type Msg
 
 
 update : Msg -> Problem -> Problem
-update msg ((Problem p) as prblm) =
+update msg prblm =
     case msg of
         Determine v ->
-            if Dict.member v p.status then
+            if statusKnown v prblm then
                 prblm
 
             else if reachable v prblm then
-                Problem { p | status = p.status |> Dict.insert v Alive }
+                prblm
+                    |> alive v
+                    |> solved
 
             else
-                Problem { p | status = p.status |> Dict.insert v Dead }
+                prblm
+                    |> dead v
+                    |> solved
 
         Label e code ->
-            Problem { p | codes = p.codes |> Dict.insert e code }
+            label e code prblm
+
+
+statusKnown : NodeId -> Problem -> Bool
+statusKnown v (Problem p) =
+    Dict.member v p.status
 
 
 reachable : NodeId -> Problem -> Bool
@@ -69,11 +86,89 @@ reachable v (Problem p) =
         |> not
 
 
-label : Problem -> Cmd Msg
-label ((Problem p) as prblm) =
+alive : NodeId -> Problem -> Problem
+alive v (Problem p) =
+    Problem { p | status = p.status |> Dict.insert v Alive }
+
+
+dead : NodeId -> Problem -> Problem
+dead v (Problem p) =
+    Problem { p | status = p.status |> Dict.insert v Dead }
+
+
+solved : Problem -> Problem
+solved (Problem p) =
     let
+        isSolved =
+            p.network
+                |> Network.endpoints p.faulty
+                |> all (\v -> known (Dict.get v p.status |> Maybe.withDefault Indetermined))
+
+        code =
+            if isSolved then
+                show p.code
+
+            else
+                hide p.code
+    in
+    Problem { p | code = code }
+
+
+all : (a -> Bool) -> Set a -> Bool
+all predicate elements =
+    elements
+        |> Set.toList
+        |> List.all predicate
+
+
+known : Status -> Bool
+known s =
+    case s of
+        Indetermined ->
+            False
+
+        _ ->
+            True
+
+
+show : Visibility a -> Visibility a
+show =
+    target >> Visible
+
+
+hide : Visibility a -> Visibility a
+hide =
+    target >> Hidden
+
+
+target : Visibility a -> a
+target vs =
+    case vs of
+        Visible v ->
+            v
+
+        Hidden v ->
+            v
+
+
+label : EdgeId -> Code -> Problem -> Problem
+label e code (Problem p) =
+    Problem { p | codes = p.codes |> Dict.insert e code }
+
+
+labelEdges : Problem -> Cmd Msg
+labelEdges (Problem p) =
+    let
+        code =
+            case p.code of
+                Hidden c ->
+                    c
+
+                Visible c ->
+                    c
+
         generator =
-            Code.avoiding p.code Code.code
+            Code.avoiding code Code.code
     in
     p.network
         |> Network.edges
@@ -87,6 +182,7 @@ type alias Context =
     { network : Network.Context
     , problem :
         { status : StatusContext
+        , code : CodeContext
         }
     }
 
@@ -98,8 +194,14 @@ type alias StatusContext =
     }
 
 
-view : Context -> Problem -> Svg Msg
-view context (Problem p) =
+type alias CodeContext =
+    { size : Float
+    , fill : String
+    }
+
+
+view : Context -> Problem -> List (Svg Msg)
+view context ((Problem p) as prblm) =
     let
         toColor status =
             case status of
@@ -117,4 +219,37 @@ view context (Problem p) =
                 |> Maybe.withDefault Indetermined
                 |> toColor
     in
-    Network.view context.network nodeColor Determine p.network
+    List.concat
+        [ Network.view context.network nodeColor Determine p.network
+        , viewCode context.problem.code prblm
+        ]
+
+
+viewCode : CodeContext -> Problem -> List (Svg a)
+viewCode context (Problem p) =
+    case p.code of
+        Visible code ->
+            let
+                endpoints =
+                    p.network
+                        |> Network.endpoints p.faulty
+                        |> Set.toList
+                        |> List.map (\v -> Network.locationOf v p.network |> Maybe.withDefault (Position.position 0 0))
+
+                position =
+                    endpoints
+                        |> List.foldl Position.add (Position.position 0 0)
+                        |> Position.scale (1 / toFloat (List.length endpoints))
+            in
+            [ Svg.g [ Attribute.id "codes" ]
+                [ Svg.text_
+                    [ Attribute.x <| String.fromFloat <| Position.xCoordinate position
+                    , Attribute.y <| String.fromFloat <| Position.yCoordinate position
+                    , Attribute.fill context.fill 
+                    , Attribute.fontSize <| (String.fromFloat context.size) ++ "px" ]
+                    [ Svg.text code ]
+                ]
+            ]
+
+        Hidden _ ->
+            []

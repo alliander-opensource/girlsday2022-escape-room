@@ -1,8 +1,11 @@
 module Diagnostic exposing (main)
 
 import Browser
-import Network exposing (addEdge, addNode, node, position)
+import Network exposing (addEdge, addNode, node)
+import Network.Position exposing (position)
 import Problem exposing (Msg, Problem)
+import Svg exposing (Svg)
+import Svg.Attributes as Attribute
 
 
 main : Program () Problem Msg
@@ -28,6 +31,10 @@ main =
                     , dead = "red"
                     , indetermined = "white"
                     }
+                , code =
+                    { size = 0.1
+                    , fill = "black"
+                    }
                 }
             }
 
@@ -45,14 +52,13 @@ main =
                 |> addEdge "BBa" "B" "Ba"
                 |> addEdge "BBb" "B" "Bb"
 
-
         problem =
             Problem.problem network "A" "AB" "A1b-"
     in
     Browser.element
-        { init = \_ -> ( problem, Problem.label problem )
+        { init = \_ -> ( problem, Problem.labelEdges problem )
         , update = lift Problem.update
-        , view = Problem.view context
+        , view = view context
         , subscriptions = \_ -> Sub.none
         }
 
@@ -60,3 +66,25 @@ main =
 lift : (msg -> m -> m) -> msg -> m -> ( m, Cmd msg )
 lift update msg m =
     ( update msg m, Cmd.none )
+
+
+view : Problem.Context -> Problem -> Svg Problem.Msg
+view context problem =
+    let
+        offset =
+            context.network.node.radius + context.network.node.strokeWidth
+
+        viewBox =
+            [ -1 - offset, -1 - offset, 2 + 2 * offset, 2 + 2 * offset ]
+                |> List.map String.fromFloat
+                |> String.join " "
+    in
+    Svg.svg
+        [ Attribute.width <| String.fromInt context.network.size
+        , Attribute.height <| String.fromInt context.network.size
+        , Attribute.viewBox viewBox
+        ]
+    <|
+        List.concat
+            [ Problem.view context problem
+            ]
