@@ -1,4 +1,4 @@
-module Network.Position exposing (Position, add, position, scale, xCoordinate, yCoordinate)
+module Network.Position exposing (Position, add, circle, position, scale, xCoordinate, yCoordinate)
 
 
 type Position
@@ -14,6 +14,18 @@ position x y =
         { x = x
         , y = y
         }
+
+
+circle : Float -> Float -> Position
+circle radius angle =
+    let
+        x =
+            radius * cos angle
+
+        y =
+            radius * sin angle
+    in
+    position x y
 
 
 xCoordinate : Position -> Float

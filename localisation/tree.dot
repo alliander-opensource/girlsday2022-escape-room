@@ -1,0 +1,92 @@
+digraph G {
+    root -> a
+    root -> b
+    root -> c
+
+    a -> a1
+    a -> a2
+    a -> a3
+    a -> a4
+
+    b -> b1
+    b -> b2
+    b -> b3
+    b -> b4
+
+    c -> c1
+    c -> c2
+    c -> c3
+    c -> c4
+
+    a1 -> a1a
+    a1 -> a1b
+    a1 -> a1c
+    a1 -> a1d
+    a1 -> a1e
+
+    a2 -> a2a
+    a2 -> a2b
+    a2 -> a2c
+    a2 -> a2d
+    a2 -> a2e
+
+    a3 -> a3a
+    a3 -> a3b
+    a3 -> a3c
+    a3 -> a3d
+    a3 -> a3e
+
+    a4 -> a4a
+    a4 -> a4b
+    a4 -> a4c
+    a4 -> a4d
+    a4 -> a4e
+
+    b1 -> b1a
+    b1 -> b1b
+    b1 -> b1c
+    b1 -> b1d
+    b1 -> b1e
+
+    b2 -> b2a
+    b2 -> b2b
+    b2 -> b2c
+    b2 -> b2d
+    b2 -> b2e
+
+    b3 -> b3a
+    b3 -> b3b
+    b3 -> b3c
+    b3 -> b3d
+    b3 -> b3e
+
+    b4 -> b4a
+    b4 -> b4b
+    b4 -> b4c
+    b4 -> b4d
+    b4 -> b4e
+
+    c1 -> c1a
+    c1 -> c1b
+    c1 -> c1c
+    c1 -> c1d
+    c1 -> c1e
+    
+    c2 -> c2a
+    c2 -> c2b
+    c2 -> c2c
+    c2 -> c2d
+    c2 -> c2e
+  
+    c3 -> c3a
+    c3 -> c3b
+    c3 -> c3c
+    c3 -> c3d
+    c3 -> c3e
+ 
+    c4 -> c4a
+    c4 -> c4b
+    c4 -> c4c
+    c4 -> c4d
+    c4 -> c4e
+}
