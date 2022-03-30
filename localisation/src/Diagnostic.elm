@@ -1,14 +1,15 @@
 module Diagnostic exposing (main)
 
 import Browser
-import Network exposing (addEdge, addNode, node)
+import Network exposing (EdgeId, Network, addEdge, addNode, node)
 import Network.Position exposing (position)
-import Problem exposing (Msg, Problem)
+import Problem exposing (Context, Problem)
+import Random
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
 
 
-main : Program () Problem Msg
+main : Program () Model Msg
 main =
     let
         context =
@@ -53,19 +54,73 @@ main =
                 |> addEdge "BBa" "B" "Ba"
                 |> addEdge "BBb" "B" "Bb"
 
-        problem =
-            Problem.problem network "A" "AB" "A1b-"
+        cmd =
+            Network.randomEdge network
+                |> Random.generate Broken
     in
     Browser.element
-        { init = \_ -> ( problem, Cmd.none )
-        , update = Problem.update context
-        , view = view context >> Svg.toUnstyled
+        { init = \_ -> ( Initializing context network, cmd )
+        , update = update
+        , view = view >> Svg.toUnstyled
         , subscriptions = \_ -> Sub.none
         }
 
 
-view : Problem.Context -> Problem -> Svg Problem.Msg
-view context problem =
+type Model
+    = Initializing Context Network
+    | Initialized Context Problem
+    | Failed
+
+
+type Msg
+    = ProblemMsg Problem.Msg
+    | Broken (Maybe EdgeId)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case ( msg, model ) of
+        ( ProblemMsg m, Initialized context problem ) ->
+            let
+                ( p, cmd ) =
+                    Problem.update context m problem
+            in
+            ( Initialized context p, Cmd.map ProblemMsg cmd )
+
+        ( Broken (Just e), Initializing context network ) ->
+            let
+                problem =
+                    Problem.problem network "A" e "A1b-"
+            in
+            ( Initialized context problem, Cmd.none )
+
+        ( Broken Nothing, Initializing _ _ ) ->
+            ( Failed, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+view : Model -> Svg Msg
+view model =
+    case model of
+        Initializing _ network ->
+            viewInitializing network
+
+        Initialized context problem ->
+            viewInitialized context problem
+
+        Failed ->
+            viewFailed
+
+
+viewInitializing : Network -> Svg Msg
+viewInitializing _ =
+    Svg.svg [] []
+
+
+viewInitialized : Context -> Problem -> Svg Msg
+viewInitialized context problem =
     let
         offset =
             context.network.node.radius + context.network.node.strokeWidth
@@ -82,13 +137,21 @@ view context problem =
             else
                 "default"
     in
-    Svg.svg
-        [ Attribute.width <| String.fromInt context.network.size
-        , Attribute.height <| String.fromInt context.network.size
-        , Attribute.viewBox viewBox
-        , Attribute.cursor cursor
-        ]
-    <|
-        List.concat
-            [ Problem.view context problem
+    Svg.map ProblemMsg <|
+        Svg.svg
+            [ Attribute.width <| String.fromInt context.network.size
+            , Attribute.height <| String.fromInt context.network.size
+            , Attribute.viewBox viewBox
+            , Attribute.cursor cursor
             ]
+        <|
+            List.concat
+                [ Problem.view context problem
+                ]
+
+
+viewFailed : Svg Msg
+viewFailed =
+    Svg.svg []
+        [ Svg.text_ [ Attribute.x "0", Attribute.y "0" ] [ Svg.text "Could not generate a broken edge" ]
+        ]

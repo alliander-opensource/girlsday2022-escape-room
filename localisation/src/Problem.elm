@@ -193,7 +193,7 @@ type alias Context =
     , problem :
         { status : StatusContext
         , code : CodeContext
-        , delay: Int
+        , delay : Int
         }
     }
 

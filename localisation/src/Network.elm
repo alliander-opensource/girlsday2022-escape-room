@@ -1,9 +1,10 @@
-module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, addEdge, addNode, edgeId, edges, empty, endpoints, locationOf, node, paths, view)
+module Network exposing (Context, Edge, EdgeId, Network, Node, NodeId, addEdge, addNode, edgeId, edges, empty, endpoints, locationOf, node, paths, randomEdge, view)
 
 import Dict exposing (Dict)
 import Html.Attributes exposing (start)
 import Network.Path as Path exposing (Path)
 import Network.Position as Position exposing (Position, position)
+import Random exposing (Generator)
 import Set exposing (Set)
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
@@ -280,3 +281,20 @@ viewEdge (Edge { id, start, finish }) =
         , Attribute.y2 <| String.fromFloat <| Position.yCoordinate f
         ]
         []
+
+
+randomEdge : Network -> Generator (Maybe EdgeId)
+randomEdge (Network net) =
+    let
+        candidates =
+            net.edges
+                |> Dict.values
+                |> List.concatMap (Set.map Tuple.first >> Set.toList)
+    in
+    case candidates of
+        [] ->
+            Random.constant Nothing
+
+        e :: es ->
+            Random.uniform e es
+                |> Random.map Just
