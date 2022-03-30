@@ -6,11 +6,9 @@ import Dict exposing (Dict)
 import Network exposing (EdgeId, Network, NodeId)
 import Network.Path as Path
 import Network.Position as Position
-import Random
 import Set exposing (Set)
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
-import Task
 
 
 type Problem

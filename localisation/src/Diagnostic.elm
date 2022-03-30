@@ -1,7 +1,8 @@
 module Diagnostic exposing (main)
 
 import Browser
-import Network exposing (EdgeId, Network, addEdge, addNode, node)
+import Code exposing (Code)
+import Network exposing (EdgeId, Network, NodeId, addEdge, addNode, node)
 import Network.Position exposing (position)
 import Problem exposing (Context, Problem)
 import Random
@@ -56,10 +57,12 @@ main =
 
         cmd =
             Network.randomEdge network
-                |> Random.generate Broken
+                |> Random.generate (Broken "A")
+
+        code = "A1b-"
     in
     Browser.element
-        { init = \_ -> ( Initializing context network, cmd )
+        { init = \_ -> ( Initializing code context network, cmd )
         , update = update
         , view = view >> Svg.toUnstyled
         , subscriptions = \_ -> Sub.none
@@ -67,14 +70,14 @@ main =
 
 
 type Model
-    = Initializing Context Network
+    = Initializing Code Context Network
     | Initialized Context Problem
     | Failed
 
 
 type Msg
     = ProblemMsg Problem.Msg
-    | Broken (Maybe EdgeId)
+    | Broken NodeId (Maybe EdgeId)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,14 +90,14 @@ update msg model =
             in
             ( Initialized context p, Cmd.map ProblemMsg cmd )
 
-        ( Broken (Just e), Initializing context network ) ->
+        ( Broken v (Just e), Initializing code context network ) ->
             let
                 problem =
-                    Problem.problem network "A" e "A1b-"
+                    Problem.problem network v e code
             in
             ( Initialized context problem, Cmd.none )
 
-        ( Broken Nothing, Initializing _ _ ) ->
+        ( Broken _ Nothing, Initializing _ _ _ ) ->
             ( Failed, Cmd.none )
 
         _ ->
@@ -104,7 +107,7 @@ update msg model =
 view : Model -> Svg Msg
 view model =
     case model of
-        Initializing _ network ->
+        Initializing _ _ network ->
             viewInitializing network
 
         Initialized context problem ->
