@@ -1,0 +1,19 @@
+.PHONY=clean
+
+SOURCE_DIR=src
+SOURCE_NAME=morse
+TARGET_DIR=target
+ARTIFACT_NAME=morse
+
+SOURCE=${SOURCE_DIR}/${SOURCE_NAME}.ps
+ARTIFACT=${TARGET_DIR}/${ARTIFACT_NAME}.pdf
+
+${ARTIFACT}: ${SOURCE} ${TARGET_DIR}
+	ps2pdf $< $@
+
+${TARGET_DIR}:
+	mkdir -p $@
+
+
+clean:
+	rm -r ${ARTIFACT}

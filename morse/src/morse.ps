@@ -1,0 +1,160 @@
+%!PS-Adobe-3.0
+%%Pages: 1
+%%EndComments
+%%BeginProlog
+8 dict begin
+    /FontType 3 def
+    /FontMatrix [0.002 0 0 0.002 0 0] def
+    /FontBBox [0 0 500 500] def
+    /Encoding [ 256 { /.notdef } repeat ] def
+    Encoding 45 /dash put % ASCII 45 (-)
+    Encoding 46 /dot put  % ASCII 46 (.)
+
+    /CharProcs 3 dict def
+    CharProcs begin
+        /.notdef {} def
+        /dot {
+            300 250 moveto
+            250 250 50 0 360 arc
+            closepath
+            fill
+        } bind def
+        /dash {
+            150 200 moveto
+            350 200 lineto
+            350 250 50 270 90 arc
+            150 300 lineto
+            150 250 50 90 270 arc
+            closepath
+            fill
+        } bind def
+    end
+
+    /BuildGlyph {
+        500 0
+        0 0 500 500
+        setcachedevice
+        exch /CharProcs get exch
+        2 copy known not {
+            pop /.notdef
+        } if
+        get exec    
+    } bind def
+
+    /BuildChar {
+        1 index /Encoding get exch get
+        1 index /BuildGlyph get exec     
+    } bind def
+    
+    currentdict
+end
+
+/MorseFont exch definefont pop
+
+/kerning {
+    [/last /first] dup length 1 add dict begin { exch def } forall
+        /unit fontscale 5 div def
+        first 45 eq last 45 eq and { % dash dash
+            unit neg 0 rmoveto
+        } if
+        first 45 eq last 46 eq and { % dash dot
+            unit 2 mul neg 0 rmoveto
+        } if
+        first 46 eq last 45 eq and { % dot dash
+            unit 2 mul neg 0 rmoveto
+        } if
+        first 46 eq last 46 eq and { % dot dot
+            unit 3 mul neg 0 rmoveto
+        } if
+     end
+} def
+
+/definitions { % table
+    1 dict begin
+        /index 1 def
+        {
+            0 index fontscale mul neg moveto
+            aload pop definition
+            /index index 1 add def
+        } forall
+    end
+} def
+
+/definition { % (A) (.-)
+    [/morse /letter] dup length dict begin { exch def } forall
+        /Helvetica findfont fontscale scalefont setfont
+        letter show
+        /MorseFont findfont fontscale scalefont setfont
+        /kerning load morse kshow
+    end
+} def
+%%EndProlog
+%%BeginSetup
+/table [
+    [(A) (.-)]
+    [(B) (-...)]
+    [(C) (-.-.)]
+    [(D) (-..)]
+    [(E) (.)]
+    [(F) (..-.)]
+    [(G) (--.)]
+    [(H) (....)]
+    [(I) (..)]
+    [(J) (.---)]
+    [(K) (-.-)]
+    [(L) (.-..)]
+    [(M) (--)]
+    [(N) (-.)]
+    [(O) (---)]
+    [(P) (.--.)]
+    [(Q) (--.-)]
+    [(R) (.-.)]
+    [(S) (...)]
+    [(T) (-)]
+    [(U) (..-)]
+    [(V) (...-)]
+    [(W) (.--)]
+    [(X) (-..-)]
+    [(Y) (-.--)]
+    [(Z) (--..)]
+    [(0) (-----)]
+    [(1) (.----)]
+    [(2) (..---)]
+    [(3) (...--)]
+    [(4) (....-)]
+    [(5) (.....)]
+    [(6) (-....)]
+    [(7) (--...)]
+    [(8) (---..)]
+    [(9) (----.)]
+] def
+
+/page-width 210 def
+/page-height 297 def
+%%EndSetup
+%%Page: Morse 1
+save /clean-slate exch def
+
+72 25.4 div dup scale
+
+/fontscale 12 def
+
+newpath
+
+page-width 10 div page-height 3 div 2 mul translate
+
+table 0 12 getinterval definitions
+
+60 0 translate
+
+table 12 12 getinterval definitions
+
+60 0 translate
+
+table 24 12 getinterval definitions
+
+showpage
+
+clean-slate restore
+%%Trailer
+%%EOF
