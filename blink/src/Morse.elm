@@ -1,7 +1,6 @@
 module Morse exposing (Context, Msg(..), Player, fromString, update, view)
 
 import Array exposing (Array)
-import Debug
 import Morse.Timer as Timer exposing (Timer)
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as Attribute
@@ -296,7 +295,6 @@ view context (Player { signal, duration, timer }) =
         content =
             signal
                 |> Array.get index
-                |> Debug.log "signal"
                 |> Maybe.map circle
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []

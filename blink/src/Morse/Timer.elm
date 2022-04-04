@@ -1,4 +1,4 @@
-module Morse.Timer exposing (Timer, elapsed, update, from)
+module Morse.Timer exposing (Timer, elapsed, from, update)
 
 import Time exposing (Posix)
 

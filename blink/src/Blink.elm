@@ -33,6 +33,7 @@ type Model
     = Initializing Context String
     | Initialized Player
 
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
