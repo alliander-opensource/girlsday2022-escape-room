@@ -14,7 +14,7 @@ ${WEBPAGE_DIR}: ${SUB_DIRECTORIES}
 	echo "<meta http-equiv=refresh content=0;url=localisation.html>" > $@/index.html
 	for directory in ${SUB_DIRECTORIES} ; \
 	do \
-		cp -rf $$directory/target/* docs ; \
+		cp -rf $$directory/target/* $@ ; \
 	done
 
 clean: ${CLEAN_TARGETS}
