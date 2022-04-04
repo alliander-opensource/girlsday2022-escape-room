@@ -1,5 +1,5 @@
 WEBPAGE_DIR=docs
-SUB_DIRECTORIES=blink decode localisation
+SUB_DIRECTORIES=blink decode localisation morse
 CLEAN_TARGETS=$(addsuffix clean,$(SUB_DIRECTORIES))
 
 .PHONY: all clean ${SUB_DIRECTORIES} ${CLEAN_TARGETS}
