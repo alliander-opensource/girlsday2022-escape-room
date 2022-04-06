@@ -27,7 +27,9 @@ For each projected number of participating during each carrousel round the follo
 3. Setup the switch station.
 4. Setup the connection station.
 
-Depending on the situation the clues can be asked for at the game table, or distributed throughout the area
+Depending on the situation the clues can be asked for at the game table, or distributed throughout the area.
+
+Make sure to have some pens and markes ready so participants can scribble.
 
 [answer/cable]: https://alliander-opensource.github.io/girlsday2022-escape-room/cable.pdf
 [decypher/switch]: https://alliander-opensource.github.io/girlsday2022-escape-room/switch.pdf
