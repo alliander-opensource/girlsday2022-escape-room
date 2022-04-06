@@ -200,7 +200,7 @@ main =
                 |> Random.generate (Broken "root")
 
         code =
-            "A1b-"
+            "B0b-"
     in
     Browser.element
         { init = \_ -> ( Initializing code context network, cmd )

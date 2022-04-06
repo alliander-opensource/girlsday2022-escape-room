@@ -22,7 +22,7 @@ main =
             }
     in
     Browser.element
-        { init = \_ -> ( Initializing context "ALPHA ONE", Task.perform Tick Time.now )
+        { init = \_ -> ( Initializing context "C 4", Task.perform Tick Time.now )
         , update = update
         , view = view context >> Svg.toUnstyled
         , subscriptions = subscriptions
