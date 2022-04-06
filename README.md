@@ -28,8 +28,11 @@ Depending on the situation the clues can be asked for at the game table, or dist
 
 Make sure to have some pens and markes ready so participants can scribble.
 
+Then open the [presentation][presentation/escape-room] to start the context
+
 [answer/cable]: https://alliander-opensource.github.io/girlsday2022-escape-room/cable.pdf
 [decypher/switch]: https://alliander-opensource.github.io/girlsday2022-escape-room/switch.pdf
 [decypher/morse]: https://alliander-opensource.github.io/girlsday2022-escape-room/morse.pdf
 [solve/location]: https://alliander-opensource.github.io/girlsday2022-escape-room/localisation.html
 [solve/connection]: https://alliander-opensource.github.io/girlsday2022-escape-room/blink.html
+[presentation/escape-room]: https://alliander-opensource.github.io/girlsday2022-escape-room/escape-room.html
