@@ -1,7 +1,4 @@
-# girlsday2022-escape-room
-Project to fascilitate the 2022 Girlsday escape room carrousel round.
-
-## Preparation
+# girlsday2022-escape-room Project to fascilitate the 2022 Girlsday escape room carrousel round.  ## Preparation
 On the day the following preparations should be made
 
 ### Prior
@@ -33,6 +30,6 @@ Make sure to have some pens and markes ready so participants can scribble.
 
 [answer/cable]: https://alliander-opensource.github.io/girlsday2022-escape-room/cable.pdf
 [decypher/switch]: https://alliander-opensource.github.io/girlsday2022-escape-room/switch.pdf
-[decypher/morse]: https://alliander-opensource.github.io/girlsday2022-escape-room/morse.pdf]
+[decypher/morse]: https://alliander-opensource.github.io/girlsday2022-escape-room/morse.pdf
 [solve/location]: https://alliander-opensource.github.io/girlsday2022-escape-room/localisation.html
 [solve/connection]: https://alliander-opensource.github.io/girlsday2022-escape-room/blink.html
