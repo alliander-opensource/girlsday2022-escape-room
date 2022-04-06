@@ -12,6 +12,8 @@ For each projected number of participating during each carrousel round the follo
 a. The [switch setting][decypher/switch] coding tables.
 b. The [morse][decypher/morse] coding table.
 
+2. Print out a number of [connection sheets][answer/cable].
+
 ### On the day
 For each projected number of participating during each carrousel round the following must be done on the day itself.
 
@@ -22,12 +24,13 @@ For each projected number of participating during each carrousel round the follo
 a. The [localisation][solve/location] of the problem.
 b. The blinking of the to be made [connection][solve/connection].
 
-3. Setup the station switch puzzles.
-4. Setup the connection puzzles.
+3. Setup the switch station.
+4. Setup the connection station.
 
 Depending on the situation the clues can be asked for at the game table, or distributed throughout the area
 
+[answer/cable]: https://alliander-opensource.github.io/girlsday2022-escape-room/cable.pdf
 [decypher/swith]: https://alliander-opensource.github.io/girlsday2022-escape-room/switch.pdf
-[decypher/morse]: https://alliander-opensource.github.io/girlsday2022-escape-room/morse.pdf
+[decypher/morse]: https://alliander-opensource.github.io/girlsday2022-escape-room/morse.pdf]
 [solve/location]: https://alliander-opensource.github.io/girlsday2022-escape-room/localisation.html
 [solve/connection]: https://alliander-opensource.github.io/girlsday2022-escape-room/blink.html

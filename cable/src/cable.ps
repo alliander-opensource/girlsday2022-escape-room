@@ -1,0 +1,69 @@
+%!PS-Adobe-3.0
+%%Pages: 1
+%%EndComments
+%%BeginProlog
+/box { % x y side
+    [/side /y /x] dup length dict begin { exch def } forall
+        x y moveto
+        side 0 rlineto
+        0 side rlineto
+        side neg 0 rlineto
+        closepath
+    end
+} def
+
+/named-box { % x y side name factor
+    [/factor /name /side /y /x] dup length dict begin { exch def } forall
+        /Helvetica findfont side scalefont setfont
+        /w name stringwidth pop def
+        x side 2 div add w 2 div sub y factor side mul add moveto
+        name show 
+        x y side box stroke 
+    end
+} def
+
+/rod { % y width side factor [names]
+    [/names /factor /side /width /y] dup length 3 add dict begin { exch def } forall
+        /w names length side mul def
+        /offset width w sub names length 1 add div def
+        0 1 names length 1 sub {
+            /index exch def
+            offset side offset add index mul add y
+            side
+            names index get
+            factor
+            named-box
+        } for
+    end
+} def
+%%EndProlog
+%%BeginSetup
+72 25.4 div dup scale
+
+/page-height 297 def
+/page-width 210 def
+
+0 page-height translate
+-90 rotate
+
+page-height page-width
+/page-height exch def
+/page-width exch def
+%%EndSetup
+%%Page: Cable 1
+save /clean-slate exch def
+
+0 page-height 2 div translate
+
+/h 30 def
+
+/size 12 def
+
+h page-width 20 0.15 [(A) (B) (C) (D)] rod
+h size add neg page-width size 0.15 [(0) (1) (2) (3) (4) (5) (6) (7) (8) (9)] rod
+
+showpage
+
+clean-slate restore
+%%Trailer
+%%EOF
