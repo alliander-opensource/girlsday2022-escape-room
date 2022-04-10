@@ -1,5 +1,5 @@
 %!PS-Adobe-3.0
-%%Pages: 9
+%%Pages: 10
 %%EndComments
 %%BeginProlog
 /switch { % x y on context
@@ -135,6 +135,48 @@
     ]
 } def
 
+/circle-point { % x y r alpha -- x' y'
+    [/alpha /r /y /x] dup length dict begin { exch def } forall
+        alpha cos r mul x add
+        alpha sin r mul y add
+    end
+} def
+
+/arrow { % x y r1 r3 delta alpha gamma epsilon
+    [/epsilon /gamma /alpha /delta /r3 /r1 /y /x] dup length 4 add dict begin { exch def } forall
+    /r2 r1 r3 add 2 div def
+    /r0 r1 delta sub def
+    /r4 r3 delta add def
+    /beta gamma epsilon sub def
+    x y r3 alpha circle-point moveto
+    x y r3 alpha beta arc
+    x y r4 beta circle-point lineto
+    x y r2 gamma circle-point lineto
+    x y r0 beta circle-point lineto
+    x y r1 beta circle-point lineto
+    x y r1 beta alpha arcn
+    closepath
+    end
+} def
+
+/arrown { % x y r1 r3 delta alpha gamma epsilon
+    [/epsilon /gamma /alpha /delta /r3 /r1 /y /x] dup length 4 add dict begin { exch def } forall
+    /r2 r1 r3 add 2 div def
+    /r0 r1 delta sub def
+    /r4 r3 delta add def
+    /beta gamma epsilon add def
+    x y r3 alpha circle-point moveto
+    x y r3 alpha beta arcn
+    x y r4 beta circle-point lineto
+    x y r2 gamma circle-point lineto
+    x y r0 beta circle-point lineto
+    x y r1 beta circle-point lineto
+    x y r1 beta alpha arc
+    closepath
+    end
+} def
+
+
 %%EndProlog
 %%BeginSetup
 /page-width 210 def
@@ -191,11 +233,26 @@ def
     true false true false
     true false true false
 ] def
-%%EndSetup
-%%Page: Grid 1
-save /clean-slate exch def
 
 72 25.4 div dup scale
+%%EndSetup
+%%Page: Test 0
+save /clean-slate exch def
+
+page-width 2 div page-height 2 div translate
+
+0 0 50 75 10 45 neg 135 neg 30 arrow
+
+0 0 50 75 10 135 neg 45 neg 30 arrown
+
+
+stroke
+showpage
+
+clean-slate restore
+
+%%Page: Grid 1
+save /clean-slate exch def
 
 grid-x grid-y n context grid
 
@@ -204,8 +261,6 @@ showpage
 clean-slate restore
 %%Page: Mask-A 2
 save /clean-slate exch def
-
-72 25.4 div dup scale
 
 grid-x grid-y n A (A) 0
 context named-mask
@@ -216,8 +271,6 @@ clean-slate restore
 %%Page: Mask-B 3
 save /clean-slate exch def
 
-72 25.4 div dup scale
-
 grid-x grid-y n A negate (B) 0
 context named-mask
 
@@ -226,8 +279,6 @@ showpage
 clean-slate restore
 %%Page: Mask-0 4
 save /clean-slate exch def
-
-72 25.4 div dup scale
 
 grid-x grid-y n O (0) 1
 context named-mask
@@ -238,8 +289,6 @@ clean-slate restore
 %%Page: Mask-1 5
 save /clean-slate exch def
 
-72 25.4 div dup scale
-
 grid-x grid-y n O negate (1) 1
 context named-mask
 
@@ -248,8 +297,6 @@ showpage
 clean-slate restore
 %%Page: Mask-a 6
 save /clean-slate exch def
-
-72 25.4 div dup scale
 
 grid-x grid-y n a (a) 2
 context named-mask
@@ -260,8 +307,6 @@ clean-slate restore
 %%Page: Mask-b 7
 save /clean-slate exch def
 
-72 25.4 div dup scale
-
 grid-x grid-y n a negate (b) 2
 context named-mask
 
@@ -271,8 +316,6 @@ clean-slate restore
 %%Page: Mask-minus 8
 save /clean-slate exch def
 
-72 25.4 div dup scale
-
 grid-x grid-y n minus (-) 3
 context named-mask
 
@@ -281,8 +324,6 @@ showpage
 clean-slate restore
 %%Page: Mask-plus 9
 save /clean-slate exch def
-
-72 25.4 div dup scale
 
 grid-x grid-y n minus negate (+) 3
 context named-mask
