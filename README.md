@@ -1,4 +1,7 @@
-# girlsday2022-escape-room Project to fascilitate the 2022 Girlsday escape room carrousel round.  ## Preparation
+# girlsday2022-escape-room
+Project to fascilitate the 2022 Girlsday escape room carrousel round.
+
+## Preparation
 On the day the following preparations should be made
 
 ### Prior
