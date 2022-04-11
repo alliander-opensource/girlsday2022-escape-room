@@ -1,5 +1,5 @@
 %!PS-Adobe-3.0
-%%Pages: 10
+%%Pages: 9
 %%EndComments
 %%BeginProlog
 /switch { % x y on context
@@ -11,17 +11,12 @@
         /ur { x w add y h add } def
         gsave 
         newpath
-        x r add y on { h r sub add  } { r add } ifelse r 0 360 arc
+        x r add y h 2 div add r r 2 3 div mul r 2 div 270 45 add 270 45 sub 35
+        on { arrow }{ 3 1 roll exch 3 2 roll arrown } ifelse
+        gsave
         fill-color setgray
         fill
-        newpath
-        x y r add moveto
-        ll lr r arct
-        lr ur r arct
-        ur ul r arct
-        ul ll r arct
-        closepath
-        stroke-color setgray
+        grestore
         stroke
         grestore
     end end
@@ -143,15 +138,16 @@
 } def
 
 /arrow { % x y r1 r3 delta alpha gamma epsilon
-    [/epsilon /gamma /alpha /delta /r3 /r1 /y /x] dup length 4 add dict begin { exch def } forall
+    [/epsilon /gamma /alpha /delta /r3 /r1 /y /x] dup length 5 add dict begin { exch def } forall
     /r2 r1 r3 add 2 div def
+    /r r2 epsilon cos div def
     /r0 r1 delta sub def
     /r4 r3 delta add def
     /beta gamma epsilon sub def
     x y r3 alpha circle-point moveto
     x y r3 alpha beta arc
     x y r4 beta circle-point lineto
-    x y r2 gamma circle-point lineto
+    x y r gamma circle-point lineto
     x y r0 beta circle-point lineto
     x y r1 beta circle-point lineto
     x y r1 beta alpha arcn
@@ -162,21 +158,20 @@
 /arrown { % x y r1 r3 delta alpha gamma epsilon
     [/epsilon /gamma /alpha /delta /r3 /r1 /y /x] dup length 4 add dict begin { exch def } forall
     /r2 r1 r3 add 2 div def
+    /r r2 epsilon cos div def
     /r0 r1 delta sub def
     /r4 r3 delta add def
     /beta gamma epsilon add def
     x y r3 alpha circle-point moveto
     x y r3 alpha beta arcn
     x y r4 beta circle-point lineto
-    x y r2 gamma circle-point lineto
+    x y r gamma circle-point lineto
     x y r0 beta circle-point lineto
     x y r1 beta circle-point lineto
     x y r1 beta alpha arc
     closepath
     end
 } def
-
-
 %%EndProlog
 %%BeginSetup
 /page-width 210 def
@@ -236,21 +231,6 @@ def
 
 72 25.4 div dup scale
 %%EndSetup
-%%Page: Test 0
-save /clean-slate exch def
-
-page-width 2 div page-height 2 div translate
-
-0 0 50 75 10 45 neg 135 neg 30 arrow
-
-0 0 50 75 10 135 neg 45 neg 30 arrown
-
-
-stroke
-showpage
-
-clean-slate restore
-
 %%Page: Grid 1
 save /clean-slate exch def
 
