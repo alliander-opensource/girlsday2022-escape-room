@@ -1,6 +1,6 @@
 # Getting Help
 
-There are a few ways to connect with the `ospo-examples` project:
+There are a few ways to connect with the `girlsday2022-escape-room` project:
 
 * Submit an issue
 
