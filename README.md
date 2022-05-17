@@ -39,3 +39,13 @@ Then open the [presentation][presentation/escape-room] to start the context
 [solve/location]: https://alliander-opensource.github.io/girlsday2022-escape-room/localisation.html
 [solve/connection]: https://alliander-opensource.github.io/girlsday2022-escape-room/blink.html
 [presentation/escape-room]: https://alliander-opensource.github.io/girlsday2022-escape-room/escape-room.html
+
+# License
+This project is licensed under the Mozilla Public License, version 2.0 - see [LICENSE](LICENSE) for details.
+
+# Contributing
+Please read [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) and [CONTRIBUTING](CONTRIBUTING.md) for details on the process 
+for submitting pull requests to us.
+
+# Contact
+Please read [SUPPORT](SUPPORT.md) for how to connect and get into contact with the girlsday2022-escape-room project.
